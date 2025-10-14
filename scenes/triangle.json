@@ -1,0 +1,36 @@
+{
+    "meshes": [
+        {
+            "path": "../resources/diamond.obj",
+            "position": [0, 0, 0],
+            "scale": [0.5, 0.5, 0.5],
+            "direction": [0, 0, -1],
+            "color": "F9F9F9",
+            "opacity": 1.0,
+            "reflection": 0
+        }
+    ],
+    "lights": [
+        {
+            "type": "Point",
+            "position": [-10, 10, 0],
+            "color": "FF09FF",
+            "intensity": 1.0
+        },
+        {
+            "type": "Ambient",
+            "color": "FFFFFF",
+            "intensity": 0.3
+        }
+    ],
+    "camera": {
+        "position": [0, 1, -5],
+        "direction": [0, 0, 1],
+        "width": [1.6, 0, 0],
+        "height": [0, 1.2, 0],
+        "fov": 45
+    },
+    "terrain": "../resources/terrain.obj",
+    "backgroundColor": "00FF00",
+    "backgroundOpacity": 1.0
+}
