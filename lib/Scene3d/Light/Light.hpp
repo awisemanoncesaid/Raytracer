@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Math.hpp"
-#include "Color.hpp"
 
 #include <nlohmann/json.hpp>
 
@@ -19,35 +18,34 @@ namespace Scene3d {
     };
 
     struct PhongIlluminationParams {
-        Vector3f point;
-        Vector3f normal;
-        Vector3f view;
+        vector3f point;
+        vector3f normal;
+        vector3f view;
     };
 
     struct PhongIlluminationResult {
-        Color3f diffuse;
-        Color3f specular;
+        color3f diffuse;
+        color3f specular;
     };
 
     struct GlobalIlluminationParams {
-        Vector3f point;
-        Vector3f normal;
+        vector3f point;
+        vector3f normal;
     };
 
     struct GlobalIlluminationResult {
-        Color3f factor;
+        color3f factor;
     };
 
     struct Light {
         float intensity = 1.0;
-        Color3f color = {1, 1, 1};
+        color3f color = {1, 1, 1};
         virtual PhongIlluminationResult phongIlluminate(const PhongIlluminationParams &params) const = 0;
         virtual GlobalIlluminationResult globalIlluminate(const GlobalIlluminationParams &params) const = 0;
     };
 
     struct PointLight : public Light, public JsonSerializable {
-        Vector3f position = Vector3f();
-        Vector3f size = Vector3f();
+        vector3f position = vector3f();
 
         nlohmann::json toJson() const override;
         void fromJson(const nlohmann::json &json) override;
@@ -57,7 +55,7 @@ namespace Scene3d {
     };
 
     struct DirectionalLight : public Light, public JsonSerializable {
-        Vector3f direction = Vector3f(0, 0, 1);
+        vector3f direction = vector3f(0, 0, 1);
 
         nlohmann::json toJson() const override;
         void fromJson(const nlohmann::json &json) override;

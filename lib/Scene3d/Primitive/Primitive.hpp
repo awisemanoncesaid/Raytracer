@@ -2,7 +2,6 @@
 #pragma once
 
 #include "Math.hpp"
-#include "Color.hpp"
 #include "../Serializable/Serializable.hpp"
 
 #include <nlohmann/json.hpp>
@@ -15,42 +14,44 @@ namespace Scene3d {
     // Abstract
 
     struct Moveable {
-        Vector3f position = Vector3f(0, 0, 0);
-        Vector3f rotation = Vector3f(0, 0, 0);
-        Vector3f scale = Vector3f(1, 1, 1);
+        vector3f position;
+        vector3f rotation;
+        vector3f scale;
     };
 
     struct Material {
-        Color3f color = Color3f(.7, .7, .7);
-        float opacity = 1.0;
-        float smoothness = 0.0;
-        float reflectance = 0.0;
+        color3f color;
+        float opacity;
+        float smoothness;
+        float reflectance;
         std::string texturePath;
     };
 
     struct RaycastParams {
-        float maxDistance = std::numeric_limits<float>::max();
+        Ray ray;
+        float minDistance = 0.001f;
+        float maxDistance = 1e30f;
     };
 
     struct RaycastResult;
     struct Hitable {
-        virtual RaycastResult hits(const RaycastParams &params) const = 0;
+        virtual void hits(RaycastResult &result, const RaycastParams &params) const = 0;
     };
 
     struct RaycastResult {
         // Meta
         bool hit = false;
-        float distance = std::numeric_limits<float>::max();
+        float distance;
         // Object
-        Hitable *objectPtr = nullptr;
+        Hitable *objectPtr;
         // 3D
-        Vector3f point;
-        Vector3f normal;
+        point3f point;
+        vector3f normal;
         // Material
         Material material;
     };
 
-    enum class MaterialType : u_int8_t {
+    enum class MaterialType : uint8_t {
         Air = 0,
         Water,
         Sand,
@@ -69,8 +70,8 @@ namespace Scene3d {
     };
 
     struct Vertex {
-        Vector3f position;
-        Vector3f normal;
+        vector3f position;
+        vector3f normal;
     };
 
     struct Face : Hitable {
@@ -78,12 +79,12 @@ namespace Scene3d {
         std::size_t v1;
         std::size_t v2;
 
-        RaycastResult hits(const RaycastParams &params) const override;
+        void hits(RaycastResult &result, const RaycastParams &params) const override;
     };
 
     template<size_t N>
     struct TerrainCellMesh {
-        Vector3i position;
+        vector3i position;
         std::array<Scene3d::MaterialType, N * N> materialTypes;
         std::array<Scene3d::Vertex, N * N> vertices;
         std::array<Scene3d::Face, (N - 1) * (N - 1) * 2> faces;
@@ -99,7 +100,7 @@ namespace Scene3d {
         nlohmann::json toJson() const override;
         void fromJson(const nlohmann::json &json) override;
 
-        RaycastResult hits(const RaycastParams &params) const override;
+        void hits(RaycastResult &result, const RaycastParams &params) const override;
     };
 
     struct SpherePrimitive : public Moveable, public Material, public Hitable, public JsonSerializable {
@@ -108,16 +109,16 @@ namespace Scene3d {
         nlohmann::json toJson() const override;
         void fromJson(const nlohmann::json &json) override;
 
-        RaycastResult hits(const RaycastParams &params) const override;
+        void hits(RaycastResult &result, const RaycastParams &params) const override;
     };
 
     struct PlanePrimitive : public Moveable, public Material, public Hitable, public JsonSerializable {
-        Vector3f normal;
+        vector3f normal;
 
         nlohmann::json toJson() const override;
         void fromJson(const nlohmann::json &json) override;
 
-        RaycastResult hits(const RaycastParams &params) const override;
+        void hits(RaycastResult &result, const RaycastParams &params) const override;
     };
 
 } /* namespace Scene3d */

@@ -3,6 +3,8 @@
 #include <functional>
 #include <nlohmann/json.hpp>
 
+using json = nlohmann::json;
+
 namespace Scene3d {
 
     struct JsonSerializable {

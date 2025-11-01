@@ -1,13 +1,14 @@
 #include "FrameBuffer.hpp"
 
 #include <png.h>
+#include <stdexcept>
 
 void FrameBuffer::loadLoaders()
 {
     _loaders["png"] = &FrameBuffer::fromPngFile;
 }
 
-FrameBuffer::FrameBuffer(Vector2ui resolution, const uint8_t *buffer)
+FrameBuffer::FrameBuffer(vector2ui resolution, const uint8_t *buffer)
 {
     loadLoaders();
     setResolution(resolution);
@@ -148,59 +149,42 @@ void FrameBuffer::toPngFile(const std::string &path) const
     fclose(file);
 }
 
-void FrameBuffer::clear(const Color4f &color)
+void FrameBuffer::clear(const color4f &color)
 {
     for (size_t i = 0; i < _buffer.size(); i += 4) {
-        color.toBytes(_buffer.data() + i);
+        _buffer[i] = static_cast<uint8_t>(std::clamp(color.r * 255.0f, 0.0f, 255.0f));
+        _buffer[i + 1] = static_cast<uint8_t>(std::clamp(color.g * 255.0f, 0.0f, 255.0f));
+        _buffer[i + 2] = static_cast<uint8_t>(std::clamp(color.b * 255.0f, 0.0f, 255.0f));
+        _buffer[i + 3] = static_cast<uint8_t>(std::clamp(color.a * 255.0f, 0.0f, 255.0f));
     }
 }
 
-void FrameBuffer::setResolution(const Vector2ui &resolution)
+void FrameBuffer::setResolution(const vector2ui &resolution)
 {
     _resolution = resolution;
     _buffer.resize(resolution.x * resolution.y * 4);
     clear();
 }
 
-Vector2ui FrameBuffer::getResolution() const
+vector2ui FrameBuffer::getResolution() const
 {
     return _resolution;
 }
 
-const u_int8_t *FrameBuffer::getBuffer() const
+const uint8_t *FrameBuffer::getBuffer() const
 {
     return _buffer.data();
 }
 
-void FrameBuffer::setPixel(const Vector2i &position, const Color4f &color)
+void FrameBuffer::setPixel(const vector2i &position, const color4f &color)
 {
     if (position.x >= _resolution.x || position.y >= _resolution.y || position.x < 0 || position.y < 0) {
         return;
     }
 
     size_t index = (position.y * _resolution.x + position.x) * 4;
-    color.toBytes(_buffer.data() + index);
-}
-
-void FrameBuffer::drawTriangle(const Vector2i &a, const Vector2i &b, const Vector2i &c, const Color4f &c1, const Color4f &c2, const Color4f &c3)
-{
-    Vector2i min = {std::min(std::min(a.x, b.x), c.x), std::min(std::min(a.y, b.y), c.y)};
-    Vector2i max = {std::max(std::max(a.x, b.x), c.x), std::max(std::max(a.y, b.y), c.y)};
-
-    for (int y = std::clamp(min.y, 0, static_cast<int>(_resolution.y - 1)); y <= std::clamp(max.y, 0, static_cast<int>(_resolution.y - 1)); y++) {
-        for (int x = std::clamp(min.x, 0, static_cast<int>(_resolution.x - 1)); x <= std::clamp(max.x, 0, static_cast<int>(_resolution.x - 1)); x++) {
-            Vector2i p = {x, y};
-            if ((b.y - c.y) == 0 || (a.y - c.y) == 0 || (a.x - c.x) == 0 || (c.x - b.x) == 0) {
-                continue;
-            }
-            double w1 = ((b.y - c.y) * (p.x - c.x) + (c.x - b.x) * (p.y - c.y)) / ((b.y - c.y) * (a.x - c.x) + (c.x - b.x) * (a.y - c.y));
-            double w2 = ((c.y - a.y) * (p.x - c.x) + (a.x - c.x) * (p.y - c.y)) / ((b.y - c.y) * (a.x - c.x) + (c.x - b.x) * (a.y - c.y));
-            double w3 = 1 - w1 - w2;
-
-            if (w1 >= 0 && w2 >= 0 && w3 >= 0) {
-                Color color = c1 * w1 + c2 * w2 + c3 * w3;
-                setPixel(p, color);
-            }
-        }
-    }
+    _buffer[index] = static_cast<uint8_t>(std::clamp(color.r * 255.0f, 0.0f, 255.0f));
+    _buffer[index + 1] = static_cast<uint8_t>(std::clamp(color.g * 255.0f, 0.0f, 255.0f));
+    _buffer[index + 2] = static_cast<uint8_t>(std::clamp(color.b * 255.0f, 0.0f, 255.0f));
+    _buffer[index + 3] = static_cast<uint8_t>(std::clamp(color.a * 255.0f, 0.0f, 255.0f));
 }

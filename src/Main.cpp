@@ -6,7 +6,6 @@
 #include <CommandLineParser.hpp>
 #include <iostream>
 #include <stdexcept>
-#include <nlohmann/json.hpp>
 #include <fstream>
 
 // Params ---------------------------------------------------------------------

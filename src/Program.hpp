@@ -32,12 +32,12 @@ namespace Program {
         std::string path;
         std::string output;
 
-        u_int16_t resolutionX = 1920;
-        u_int16_t resolutionY = 1080;
+        uint16_t resolutionX = 1920;
+        uint16_t resolutionY = 1080;
 
-        u_int8_t nbThreads = 16;
+        uint8_t nbThreads = 16;
 
-        u_int8_t antiAliasingSize = 3;
+        uint8_t antiAliasingSize = 3;
     };
 
     enum ExitCode {
