@@ -9,6 +9,8 @@
 
 namespace Program {
 
+    extern const CommandLineParserParams commandLineParserParams;
+
     class InvalidParamsException : public std::exception {
     public:
         InvalidParamsException(const std::string &message) : _message(message) {}

@@ -37,40 +37,48 @@ namespace Scene3d {
         color3f factor;
     };
 
-    struct Light {
+    struct Light : public JsonSerializable {
         float intensity = 1.0;
         color3f color = {1, 1, 1};
-        virtual PhongIlluminationResult phongIlluminate(const PhongIlluminationParams &params) const = 0;
-        virtual GlobalIlluminationResult globalIlluminate(const GlobalIlluminationParams &params) const = 0;
+        virtual void phongIlluminate(PhongIlluminationResult &result, const PhongIlluminationParams &params) const = 0;
+        virtual void globalIlluminate(GlobalIlluminationResult &result, const GlobalIlluminationParams &params) const = 0;
+        virtual void toJson(nlohmann::json &json) const override;
+        virtual void fromJson(const nlohmann::json &json) override;
     };
 
-    struct PointLight : public Light, public JsonSerializable {
+    struct PointLight : public Light {
         vector3f position = vector3f();
 
-        nlohmann::json toJson() const override;
+        PointLight(const nlohmann::json &json);
+
+        void toJson(nlohmann::json &json) const override;
         void fromJson(const nlohmann::json &json) override;
 
-        PhongIlluminationResult phongIlluminate(const PhongIlluminationParams &params) const override;
-        GlobalIlluminationResult globalIlluminate(const GlobalIlluminationParams &params) const override;
+        void phongIlluminate(PhongIlluminationResult &result, const PhongIlluminationParams &params) const override;
+        void globalIlluminate(GlobalIlluminationResult &result, const GlobalIlluminationParams &params) const override;
     };
 
-    struct DirectionalLight : public Light, public JsonSerializable {
+    struct DirectionalLight : public Light {
         vector3f direction = vector3f(0, 0, 1);
 
-        nlohmann::json toJson() const override;
+        DirectionalLight(const nlohmann::json &json);
+
+        void toJson(nlohmann::json &json) const override;
         void fromJson(const nlohmann::json &json) override;
 
-        PhongIlluminationResult phongIlluminate(const PhongIlluminationParams &params) const override;
-        GlobalIlluminationResult globalIlluminate(const GlobalIlluminationParams &params) const override;
+        void phongIlluminate(PhongIlluminationResult &result, const PhongIlluminationParams &params) const override;
+        void globalIlluminate(GlobalIlluminationResult &result, const GlobalIlluminationParams &params) const override;
     };
 
-    struct AmbientLight : public Light, public JsonSerializable {
+    struct AmbientLight : public Light {
 
-        nlohmann::json toJson() const override;
+        AmbientLight(const nlohmann::json &json);
+
+        void toJson(nlohmann::json &json) const override;
         void fromJson(const nlohmann::json &json) override;
 
-        PhongIlluminationResult phongIlluminate(const PhongIlluminationParams &params) const override;
-        GlobalIlluminationResult globalIlluminate(const GlobalIlluminationParams &params) const override;
+        void phongIlluminate(PhongIlluminationResult &result, const PhongIlluminationParams &params) const override;
+        void globalIlluminate(GlobalIlluminationResult &result, const GlobalIlluminationParams &params) const override;
     };
 
 }

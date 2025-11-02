@@ -15,7 +15,7 @@ namespace Scene3d {
 
     struct Moveable {
         vector3f position;
-        vector3f rotation;
+        vector3f direction;
         vector3f scale;
     };
 
@@ -38,15 +38,18 @@ namespace Scene3d {
         virtual void hits(RaycastResult &result, const RaycastParams &params) const = 0;
     };
 
+    struct Primitive : public Moveable, public Material, public Hitable, public JsonSerializable {
+        virtual void toJson(json &json) const override;
+        virtual void fromJson(const json &json) override;
+    };
+
     struct RaycastResult {
         // Meta
         bool hit = false;
         float distance;
-        // Object
-        Hitable *objectPtr;
         // 3D
-        point3f point;
-        vector3f normal;
+        vector3f point;
+        vector3f direction;
         // Material
         Material material;
     };
@@ -71,7 +74,7 @@ namespace Scene3d {
 
     struct Vertex {
         vector3f position;
-        vector3f normal;
+        vector3f direction;
     };
 
     struct Face : Hitable {
@@ -93,30 +96,30 @@ namespace Scene3d {
 
     // Concrete
 
-    struct MeshPrimitive : public Moveable, public Material, public Hitable, public JsonSerializable {
+    struct MeshPrimitive : public Primitive {
         std::vector<Vertex> vertices;
         std::vector<Face> faces;
 
-        nlohmann::json toJson() const override;
-        void fromJson(const nlohmann::json &json) override;
+        void toJson(json &json) const override;
+        void fromJson(const json &json) override;
 
         void hits(RaycastResult &result, const RaycastParams &params) const override;
     };
 
-    struct SpherePrimitive : public Moveable, public Material, public Hitable, public JsonSerializable {
-        float radius;
+    struct SpherePrimitive : public Primitive {
+        SpherePrimitive(const json &json);
 
-        nlohmann::json toJson() const override;
-        void fromJson(const nlohmann::json &json) override;
+        void toJson(json &json) const override;
+        void fromJson(const json &json) override;
 
         void hits(RaycastResult &result, const RaycastParams &params) const override;
     };
 
-    struct PlanePrimitive : public Moveable, public Material, public Hitable, public JsonSerializable {
-        vector3f normal;
+    struct PlanePrimitive : public Primitive {
+        PlanePrimitive(const json &json);
 
-        nlohmann::json toJson() const override;
-        void fromJson(const nlohmann::json &json) override;
+        void toJson(json &json) const override;
+        void fromJson(const json &json) override;
 
         void hits(RaycastResult &result, const RaycastParams &params) const override;
     };

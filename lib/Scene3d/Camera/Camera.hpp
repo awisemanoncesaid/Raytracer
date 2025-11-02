@@ -19,8 +19,8 @@ namespace Scene3d {
         vector2f worldToScreen(const vector3f &point) const;
         Ray screenToWorld(const vector2f &point) const;
 
-        nlohmann::json toJson() const override;
-        void fromJson(const nlohmann::json &json) override;
+        void toJson(json &json) const override;
+        void fromJson(const json &json) override;
 
         Camera();
         ~Camera() = default;

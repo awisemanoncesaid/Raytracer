@@ -16,11 +16,13 @@ set(LIBRARY_SOURCES
 
     Camera/Camera.cpp
 
+    Primitive/Primitive.cpp
     #Primitive/Face.cpp
     Primitive/Plane.cpp
     Primitive/Sphere.cpp
     #Primitive/Mesh.cpp
 
+    Light/Light.cpp
     Light/AmbientLight.cpp
     Light/DirectionalLight.cpp
     Light/PointLight.cpp

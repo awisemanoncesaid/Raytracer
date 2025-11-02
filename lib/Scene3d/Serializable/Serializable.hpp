@@ -8,8 +8,9 @@ using json = nlohmann::json;
 namespace Scene3d {
 
     struct JsonSerializable {
-        virtual nlohmann::json toJson() const = 0;
-        virtual void fromJson(const nlohmann::json &json) = 0;
+        virtual ~JsonSerializable() = default;
+        virtual void toJson(json &json) const = 0;
+        virtual void fromJson(const json &json) = 0;
     };
 
 }

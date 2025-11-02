@@ -91,7 +91,7 @@ namespace Scene3d
         setDirection(_direction);
     }
 
-    void Camera::fromJson(const nlohmann::json &json)
+    void Camera::fromJson(const json &json)
     {
         if (json.contains("position"))
         {
@@ -116,13 +116,11 @@ namespace Scene3d
         setFov(_fov);
     }
 
-    nlohmann::json Camera::toJson() const
+    void Camera::toJson(json &json) const
     {
-        nlohmann::json json;
         json["position"] = {_position.x, _position.y, _position.z};
         json["direction"] = {_direction.x, _direction.y, _direction.z};
         json["fov"] = _fov;
-        return json;
     }
 
 }
