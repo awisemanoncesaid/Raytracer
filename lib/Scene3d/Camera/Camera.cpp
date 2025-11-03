@@ -106,6 +106,7 @@ namespace Scene3d
             _direction.x = dirArray[0].get<float>();
             _direction.y = dirArray[1].get<float>();
             _direction.z = dirArray[2].get<float>();
+            _direction = glm::normalize(_direction);
         }
         if (json.contains("fov"))
         {

@@ -51,8 +51,7 @@ namespace Scene3d
     {
         for (const auto &hitable : _primitives) {
             RaycastResult hitResult;
-            hitable->hits(hitResult, params);
-            if (hitResult.hit) insertHit(result, hitResult);
+            if (hitable->hits(hitResult, params)) insertHit(result, hitResult);
         }
     }
 
@@ -113,7 +112,7 @@ namespace Scene3d
     void Scene::toJson(nlohmann::json &json) const
     {
         _camera.toJson(json["camera"]);
-        json["backgroundColor"] = {_backgroundColor.r, _backgroundColor.g, _backgroundColor.b};
+        json["backgroundColor"] = Math::toHexString({_backgroundColor.r, _backgroundColor.g, _backgroundColor.b});
         json["backgroundOpacity"] = _backgroundColor.a;
 
         json["lights"] = nlohmann::json::array();
@@ -178,6 +177,11 @@ namespace Scene3d
             _texturesCache[path] = texture;
             return _texturesCache[path];
         }
+    }
+
+    const Camera &Scene::getCamera() const
+    {
+        return _camera;
     }
 
     std::ostream &operator<<(std::ostream &os, const Scene &scene)

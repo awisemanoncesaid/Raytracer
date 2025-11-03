@@ -19,6 +19,8 @@ namespace Scene3d
             auto colorArray = json["color"].get<std::string>();
             if (colorArray.length() == 6) {
                 color = Math::fromHexString(colorArray);
+            } else {
+                color = {1.0f, 1.0f, 1.0f};
             }
         }
     }

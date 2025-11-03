@@ -11,7 +11,7 @@ using namespace Math;
 
 namespace Scene3d {
 
-    // Abstract
+    // Components ------------------------
 
     struct Moveable {
         vector3f position;
@@ -27,15 +27,25 @@ namespace Scene3d {
         std::string texturePath;
     };
 
+    // Raycasting -----------------------
+
     struct RaycastParams {
         Ray ray;
         float minDistance = 0.001f;
-        float maxDistance = 1e30f;
+        float maxDistance = 9999999.0f;
     };
 
-    struct RaycastResult;
+    struct RaycastResult {
+        float distance;
+        vector3f point;
+        vector3f direction;
+        Material material;
+    };
+
+    // Component methods -----------------
+
     struct Hitable {
-        virtual void hits(RaycastResult &result, const RaycastParams &params) const = 0;
+        virtual bool hits(RaycastResult &result, const RaycastParams &params) const = 0;
     };
 
     struct Primitive : public Moveable, public Material, public Hitable, public JsonSerializable {
@@ -43,16 +53,7 @@ namespace Scene3d {
         virtual void fromJson(const json &json) override;
     };
 
-    struct RaycastResult {
-        // Meta
-        bool hit = false;
-        float distance;
-        // 3D
-        vector3f point;
-        vector3f direction;
-        // Material
-        Material material;
-    };
+    // Enums and Constants ---------------
 
     enum class MaterialType : uint8_t {
         Air = 0,
@@ -72,6 +73,8 @@ namespace Scene3d {
         {Scene3d::MaterialType::Snow, {{1, 1, 1}, 1, .9}},
     };
 
+    // Primitives ------------------------
+
     struct Vertex {
         vector3f position;
         vector3f direction;
@@ -82,7 +85,7 @@ namespace Scene3d {
         std::size_t v1;
         std::size_t v2;
 
-        void hits(RaycastResult &result, const RaycastParams &params) const override;
+        bool hits(RaycastResult &result, const RaycastParams &params) const override;
     };
 
     template<size_t N>
@@ -94,8 +97,6 @@ namespace Scene3d {
     };
     using TerrainCellMesh16 = TerrainCellMesh<16>;
 
-    // Concrete
-
     struct MeshPrimitive : public Primitive {
         std::vector<Vertex> vertices;
         std::vector<Face> faces;
@@ -103,7 +104,7 @@ namespace Scene3d {
         void toJson(json &json) const override;
         void fromJson(const json &json) override;
 
-        void hits(RaycastResult &result, const RaycastParams &params) const override;
+        bool hits(RaycastResult &result, const RaycastParams &params) const override;
     };
 
     struct SpherePrimitive : public Primitive {
@@ -112,7 +113,7 @@ namespace Scene3d {
         void toJson(json &json) const override;
         void fromJson(const json &json) override;
 
-        void hits(RaycastResult &result, const RaycastParams &params) const override;
+        bool hits(RaycastResult &result, const RaycastParams &params) const override;
     };
 
     struct PlanePrimitive : public Primitive {
@@ -121,7 +122,7 @@ namespace Scene3d {
         void toJson(json &json) const override;
         void fromJson(const json &json) override;
 
-        void hits(RaycastResult &result, const RaycastParams &params) const override;
+        bool hits(RaycastResult &result, const RaycastParams &params) const override;
     };
 
 } /* namespace Scene3d */

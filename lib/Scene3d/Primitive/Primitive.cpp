@@ -20,6 +20,7 @@ namespace Scene3d
             direction.x = directionArray[0].get<float>();
             direction.y = directionArray[1].get<float>();
             direction.z = directionArray[2].get<float>();
+            direction = glm::normalize(direction);
         } else {
             direction = {0.0f, 1.0f, 0.0f};
         }
@@ -37,6 +38,8 @@ namespace Scene3d
             auto coloString = json["color"].get<std::string>();
             if (coloString.length() == 6) {
                 color = Math::fromHexString(coloString);
+            } else {
+                color = {1.0f, 1.0f, 1.0f};
             }
         }
         if (json.contains("opacity"))
